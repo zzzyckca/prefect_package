@@ -1,0 +1,31 @@
+name: "Daily-Temp-Pipeline-Deployment"
+prefect-version: 3.6.19
+
+build: null
+push: null
+
+pull:
+  - prefect.deployments.steps.set_working_directory:
+      id: set-working-dir
+      requires: prefect>=3.0.0
+      directory: C:\prefect
+
+deployments:
+  - name: "daily-temp-deployment"
+    version: null
+    tags: []
+    description: null
+    entrypoint: "master_pipeline.py:run_script_list"
+    parameters:
+      scripts_to_run:
+        - 'c:\temp\temp1.py'
+        - 'c:\temp\temp2.py'
+        - 'c:\temp\temp3.py'
+        - 'c:\temp\temp4.py'
+    work_pool:
+      name: "local-windows-pool"
+      work_queue_name: null
+      job_variables: {}
+    schedules:
+      - cron: "0 9 * * *"
+        timezone: "America/Toronto"
