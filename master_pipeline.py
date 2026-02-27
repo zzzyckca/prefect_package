@@ -45,8 +45,8 @@ def run_task(script_path):
         print(f"Error Output:\n{result.stderr.strip()}")
         raise RuntimeError(f"Script failed: {script_path}")
 
-@flow(name="Daily-Temp-Pipeline", log_prints=True, on_failure=[failure_email_hook], on_crashed=[failure_email_hook])
-def daily_temp_jobs(scripts_to_run: list[str] = None):
+@flow(name="Daily-Pipeline", log_prints=True, on_failure=[failure_email_hook], on_crashed=[failure_email_hook])
+def run_script_list(scripts_to_run: list[str] = None):
     if not scripts_to_run:
         print("No scripts provided in `scripts_to_run` parameter. Exiting.")
         return
