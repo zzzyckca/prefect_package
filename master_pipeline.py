@@ -1,6 +1,9 @@
 import os
 import subprocess
 import configparser
+import pandas as pd
+import holidays
+from datetime import datetime
 from prefect import task, flow
 from prefect_email import EmailServerCredentials, email_send_message
 
@@ -45,8 +48,51 @@ def run_task(script_path):
         print(f"Error Output:\n{result.stderr.strip()}")
         raise RuntimeError(f"Script failed: {script_path}")
 
-@flow(name="Daily-Pipeline", log_prints=True, on_failure=[failure_email_hook], on_crashed=[failure_email_hook])
-def run_script_list(scripts_to_run: list[str] = None):
+@task
+def check_toronto_business_day(target_day: int):
+    print(f"Checking if today is Toronto Business Day #{target_day} of the month...")
+    
+    today = pd.Timestamp(datetime.today().date())
+    
+    # Get Ontario holidays for the current year
+    on_holidays = holidays.CA(prov='ON', years=today.year)
+    holiday_dates = list(on_holidays.keys())
+    
+    # Create a CustomBusinessDay offset with Ontario holidays
+    bday_ca = pd.offsets.CustomBusinessDay(holidays=holiday_dates)
+    
+    # Get the first day of the current month
+    first_day_of_month = today.replace(day=1)
+    
+    # Generate business days for the current month
+    end_of_month = today + pd.offsets.MonthEnd(1)
+    business_days = pd.date_range(start=first_day_of_month, end=end_of_month, freq=bday_ca)
+    
+    # Check if the target day is valid
+    if target_day > len(business_days):
+        print(f"Skip: Month only has {len(business_days)} business days. Target {target_day} is invalid.")
+        return False
+        
+    # The Nth business day (target_day is 1-indexed)
+    nth_business_day = business_days[target_day - 1]
+    
+    is_target_day = today == nth_business_day
+    
+    if is_target_day:
+        print(f"Match: Today ({today.strftime('%Y-%m-%d')}) IS Toronto Business Day #{target_day}.")
+        return True
+    else:
+        print(f"Skip: Today ({today.strftime('%Y-%m-%d')}) is NOT Toronto Business Day #{target_day}. The target date is {nth_business_day.strftime('%Y-%m-%d')}.")
+        return False
+
+@flow(name="Master-Pipeline-Runner", log_prints=True, on_failure=[failure_email_hook], on_crashed=[failure_email_hook])
+def run_script_list(scripts_to_run: list[str] = None, target_business_day: int = None):
+    if target_business_day is not None:
+        is_target_day = check_toronto_business_day(target_business_day)
+        if not is_target_day:
+            print("Exiting pipeline safely. Today is not the target business day.")
+            return
+
     if not scripts_to_run:
         print("No scripts provided in `scripts_to_run` parameter. Exiting.")
         return

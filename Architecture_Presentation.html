@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Engineering Architecture Presentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; overflow: hidden; }
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            transform: translateX(50px);
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem;
+        }
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+        .slide.previous {
+            transform: translateX(-50px);
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 6xl;
+            padding: 3rem;
+            border-radius: 1.5rem;
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* Controls */
+        #controls {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 50;
+        }
+        .control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        #slide-counter {
+            position: absolute;
+            bottom: 2.5rem;
+            left: 2rem;
+            color: #94a3b8;
+            font-size: 1.125rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Slide 1: Title -->
+    <div class="slide active" id="slide-0">
+        <div class="text-center">
+            <h1 class="text-7xl font-extrabold mb-6 tracking-tight"><span class="gradient-text">Next-Gen Local Orchestration</span></h1>
+            <p class="text-3xl text-slate-400 font-light mb-12">Data Engineering Architecture Overview</p>
+            <div class="inline-block bg-slate-800/50 rounded-full px-6 py-3 border border-slate-700 text-sky-400">
+                Powered by Prefect 3.x
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Slide 2: The Core Problem -->
+    <div class="slide" id="slide-1">
+        <div class="glass-panel w-full max-w-5xl">
+            <h2 class="text-5xl font-bold mb-8 text-sky-400 border-b border-slate-700 pb-4">The Business Need</h2>
+            <ul class="space-y-6 text-2xl text-slate-300">
+                <li class="flex items-start"><span class="text-rose-400 mr-4 font-bold">×</span> Legacy Windows Task Scheduler is brittle, hard to monitor, and prone to "silent failures".</li>
+                <li class="flex items-start"><span class="text-sky-400 mr-4 font-bold">✓</span> Data Pipelines require robust error handling, immediate email alerts, and clear, accessible logs.</li>
+                <li class="flex items-start"><span class="text-sky-400 mr-4 font-bold">✓</span> We need 100% data privacy: A completely local, open-source orchestration system that doesn't rely on the cloud.</li>
+            </ul>
+        </div>
+    </div>
+
+
+
+
+    <!-- Slide 3: The Architecture Solution -->
+    <div class="slide" id="slide-2">
+        <div class="glass-panel w-full max-w-5xl">
+            <h2 class="text-5xl font-bold mb-8 text-indigo-400 border-b border-slate-700 pb-4">The Architectural Solution</h2>
+            <div class="grid grid-cols-2 gap-8">
+                <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                    <h3 class="text-2xl font-bold mb-4 text-white">Isolated Environment</h3>
+                    <p class="text-xl text-slate-400">The entire system lives securely in <code>C:\prefect</code>. The `install.bat` wrapper mathematically builds the environment from scratch, ensuring perfect reproducibility without affecting the host machine.</p>
+                </div>
+                <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                    <h3 class="text-2xl font-bold mb-4 text-white">Invisible Operation</h3>
+                    <p class="text-xl text-slate-400"><code>start.bat</code> leverages native Windows VBScript to boot the Prefect Server and Worker instances into "Session 0", meaning absolutely no intrusive console windows on your taskbar.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Slide 4: Invisible Operation -->
+    <div class="slide" id="slide-3">
+        <div class="glass-panel w-full max-w-5xl">
+            <h2 class="text-5xl font-bold mb-8 text-slate-300 border-b border-slate-700 pb-4">Invisible Background Operations</h2>
+            <div class="space-y-6 text-2xl text-slate-300">
+                <p>The system is designed to run silently without any popup Command Prompt windows interrupting users.</p>
+                <div class="bg-slate-900 rounded-lg p-5 font-mono text-lg border border-slate-700 text-slate-300 relative group">
+                    <span class="text-purple-400"># Inside start.bat</span><br>
+                    <span class="text-sky-400">echo</span> Set WshShell = CreateObject("WScript.Shell") > run_hidden.vbs<br>
+                    <span class="text-sky-400">echo</span> WshShell.Run chr(34) ^& "prefect server start" ^& chr(34), <span class="text-amber-300">0</span> >> run_hidden.vbs<br>
+                    <span class="text-sky-400">cscript</span> //nologo run_hidden.vbs
+                </div>
+                <div class="grid grid-cols-2 gap-6 mt-6">
+                    <div class="bg-slate-800 p-5 rounded border border-slate-600">
+                        <h4 class="text-white font-bold mb-2">Window Style: 0</h4>
+                        <p class="text-lg">The <code>0</code> parameter triggers "wsHide" in the Windows API, instantly sending the process to the background.</p>
+                    </div>
+                    <div class="bg-slate-800 p-5 rounded border border-slate-600">
+                        <h4 class="text-white font-bold mb-2">Ghost Processes</h4>
+                        <p class="text-lg">If you need to restart the machine or stop Prefect, you run <code>stop.bat</code> which cleanly kills these hidden processes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Slide 5: Managing Dependencies -->
+    <div class="slide" id="slide-4">
+        <div class="glass-panel w-full max-w-5xl">
+            <h2 class="text-5xl font-bold mb-8 text-yellow-400 border-b border-slate-700 pb-4">User Guide: New Packages</h2>
+            <div class="space-y-6 text-2xl text-slate-300">
+                <p>If a team member writes a new script that needs a completely new 3rd-party library (like <code class="text-yellow-200">beautifulsoup4</code> or <code class="text-yellow-200">PyPDF2</code>), how do we make sure it works in Production?</p>
+                <div class="flex items-center gap-6 bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                    <div class="flex-1">
+                        <h3 class="font-bold text-white mb-2">Step 1: Declare It</h3>
+                        <p class="text-xl">Open <code>C:\prefect\requirements.txt</code> and type the package name on a new line.</p>
+                    </div>
+                    <div class="text-yellow-400 font-bold text-3xl">→</div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-white mb-2">Step 2: Install It</h3>
+                        <p class="text-xl">Double-click <code class="text-amber-400 bg-slate-900 px-2 py-1 rounded border border-slate-600">install.bat</code>.</p>
+                    </div>
+                </div>
+                <p class="text-xl italic mt-4">That's it. The virtual environment will automatically download and isolate the new dependency without touching the host machine's Python install.</p>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Slide 6: Adding a New Script -->
+    <div class="slide" id="slide-5">
+        <div class="glass-panel w-full max-w-5xl">
+            <h2 class="text-5xl font-bold mb-8 text-teal-400 border-b border-slate-700 pb-4">User Guide: Replacing a Script</h2>
+            <div class="space-y-6 text-2xl text-slate-300">
+                <p>To schedule a brand new Python script to run, you don't need to write any Prefect code. You just modify the <code>prefect.yaml</code> list to point to your new file.</p>
+                
+                <div class="bg-slate-900 rounded-lg p-5 font-mono text-lg border border-slate-700 text-slate-300 relative group">
+                    <span class="text-purple-400">parameters:</span><br>
+                    &nbsp;&nbsp;<span class="text-purple-400">scripts_to_run:</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-rose-400 line-through decoration-rose-500/50">- 'c:\temp\old_job.py'</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-400 font-bold bg-green-900/40 px-2 py-1 rounded inline-block mt-1">- 'c:\temp\my_new_job.py' &lt;-- Swap the filename</span>
+                </div>
+                
+                <p class="text-xl mt-4">Once you change the target script, double-click <code class="text-amber-400 bg-slate-800 px-2 rounded">deployment.bat</code> and Prefect will automatically run the new file instead!</p>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Slide 7: UI Glossary 1 -->
+    <div class="slide" id="slide-6">
+        <div class="glass-panel w-full max-w-6xl">
+            <h2 class="text-5xl font-bold mb-8 text-sky-400 border-b border-slate-700 pb-4">UI Guide: Core Navigation</h2>
+            <div class="grid grid-cols-2 gap-8 mt-6">
+                <!-- Dashboard -->
+                <div class="bg-slate-800/80 p-5 rounded-xl border border-sky-500/30">
+                    <h3 class="text-2xl font-bold text-white flex items-center gap-3 mb-3">
+                        <span class="bg-sky-500/20 text-sky-400 p-2 rounded">Dashboard</span>
+                    </h3>
+                    <p class="text-xl text-slate-300">The Command Center. Provides a high-level 30-day overview of all recent run successes, failure rates, and a calendar of upcoming scheduled pipelines.</p>
+                </div>
+                
+                <!-- Runs -->
+                <div class="bg-slate-800/80 p-5 rounded-xl border border-sky-500/30">
+                    <h3 class="text-2xl font-bold text-white flex items-center gap-3 mb-3">
+                        <span class="bg-sky-500/20 text-sky-400 p-2 rounded">Runs</span>
+                    </h3>
+                    <p class="text-xl text-slate-300">The Audit Log. A detailed, chronological list of every single pipeline execution. Click on any run here to view the exact Python print statements and error tracebacks.</p>
+                </div>
+
+                <!-- Deployments -->
+                <div class="bg-slate-800/80 p-5 rounded-xl border border-sky-500/30">
+                    <h3 class="text-2xl font-bold text-white flex items-center gap-3 mb-3">
+                        <span class="bg-sky-500/20 text-sky-400 p-2 rounded">Deployments</span>
+                    </h3>
+                    <p class="text-xl text-slate-300">The Schedules. This represents the configurations from `prefect.yaml`. You can instantly pause/resume schedules or manually trigger an immediate run from here without touching code.</p>
+                </div>
+
+                <!-- Flows -->
+                <div class="bg-slate-800/80 p-5 rounded-xl border border-sky-500/30">
+                    <h3 class="text-2xl font-bold text-white flex items-center gap-3 mb-3">
+                        <span class="bg-sky-500/20 text-sky-400 p-2 rounded">Flows</span>
+                    </h3>
+                    <p class="text-xl text-slate-300">The Blueprints. A repository of the main Python orchestrator functions (like the `run_script_list` Master Pipeline) that the system is currently aware of.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Slide 8: UI Glossary 2 -->
+    <div class="slide" id="slide-7">
+        <div class="glass-panel w-full max-w-6xl">
+            <h2 class="text-5xl font-bold mb-8 text-fuchsia-400 border-b border-slate-700 pb-4">UI Guide: Advanced Infrastructure</h2>
+            <div class="grid grid-cols-2 gap-8 mt-6">
+                <!-- Work Pools -->
+                <div class="bg-slate-800/80 p-5 rounded-xl border border-fuchsia-500/30">
+                    <h3 class="text-2xl font-bold text-white flex items-center gap-3 mb-3">
+                        <span class="bg-fuchsia-500/20 text-fuchsia-400 p-2 rounded">Work Pools</span>
+                    </h3>
+                    <p class="text-xl text-slate-300">The Engine Room. Represents our local Windows background worker. If this displays as 'Offline', standard scheduled scripts will wait in queue until it connects.</p>
+                </div>
+                
+                <!-- Blocks -->
+                <div class="bg-slate-800/80 p-5 rounded-xl border border-fuchsia-500/30">
+                    <h3 class="text-2xl font-bold text-white flex items-center gap-3 mb-3">
+                        <span class="bg-fuchsia-500/20 text-fuchsia-400 p-2 rounded">Blocks</span>
+                    </h3>
+                    <p class="text-xl text-slate-300">Secure Storage. Used to configure things like Email Server Credentials (`my-email-credentials`) directly in the UI so we never hardcode passwords directly into our Python scripts.</p>
+                </div>
+
+                <!-- Variables -->
+                <div class="bg-slate-800/80 p-5 rounded-xl border border-fuchsia-500/30">
+                    <h3 class="text-2xl font-bold text-white flex items-center gap-3 mb-3">
+                        <span class="bg-fuchsia-500/20 text-fuchsia-400 p-2 rounded">Variables</span>
+                    </h3>
+                    <p class="text-xl text-slate-300">Global Settings. A centralized place to store simple strings or JSON configurations that multiple different scripts might need to read dynamically.</p>
+                </div>
+
+                <!-- Automations/Event Feed/Concurrency -->
+                <div class="bg-slate-800/80 p-5 rounded-xl border border-fuchsia-500/30">
+                    <h3 class="text-2xl font-bold text-white flex items-center gap-3 mb-3">
+                        <span class="bg-fuchsia-500/20 text-fuchsia-400 p-2 rounded">Automations / Events / Concurrency</span>
+                    </h3>
+                    <p class="text-xl text-slate-300">Enterprise Features. Used for advanced triggers (e.g., "if this flow fails, trigger a webhook to Teams") or artificially limiting how many scripts execute simultaneously.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Slide 9: Advanced Scheduling -->
+    <div class="slide" id="slide-8">
+        <div class="glass-panel w-full max-w-6xl">
+            <h2 class="text-5xl font-bold mb-8 text-emerald-400 border-b border-slate-700 pb-4">Advanced Scheduling Capabilities</h2>
+            <p class="text-2xl text-slate-300 mb-8">We control pipelines entirely through a simple `prefect.yaml` file, unlocking enterprise-grade precision:</p>
+            <div class="grid grid-cols-4 gap-4">
+                <div class="bg-slate-800/80 p-5 rounded-lg border border-slate-600">
+                    <div class="text-xl font-bold text-white mb-2">Cron</div>
+                    <div class="text-sm text-emerald-400 font-mono mb-2">"0 9 * * *"</div>
+                    <p class="text-slate-400">Standard daily or weekly execution patterns.</p>
+                </div>
+                <div class="bg-slate-800/80 p-5 rounded-lg border border-slate-600">
+                    <div class="text-xl font-bold text-white mb-2">Intervals</div>
+                    <div class="text-sm text-emerald-400 font-mono mb-2">1209600.0s</div>
+                    <p class="text-slate-400">Strict mathematically enforced loops (e.g. Every 14 days exactly).</p>
+                </div>
+                <div class="bg-slate-800/80 p-5 rounded-lg border border-slate-600">
+                    <div class="text-xl font-bold text-white mb-2">RRule</div>
+                    <div class="text-sm text-emerald-400 font-mono mb-2">DTSTART...</div>
+                    <p class="text-slate-400">Lists of completely custom, unrelated dates.</p>
+                </div>
+                <div class="bg-slate-800/80 p-5 border border-sky-500 rounded-lg shadow-[0_0_15px_rgba(56,189,248,0.3)]">
+                    <div class="text-xl font-bold text-sky-400 mb-2">Business Data AI</div>
+                    <div class="text-sm text-sky-300 font-mono mb-2">target: 5</div>
+                    <p class="text-slate-300">Python + Pandas calculates the true Nth business day, explicitly skipping weekends and Ontario statutory holidays.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Slide 10: Setting Up Triggers -->
+    <div class="slide" id="slide-9">
+        <div class="glass-panel w-full max-w-5xl">
+            <h2 class="text-5xl font-bold mb-8 text-cyan-400 border-b border-slate-700 pb-4">User Guide: Custom Triggers</h2>
+            <div class="space-y-6 text-2xl text-slate-300">
+                <p>Instead of Cron, you can use advanced Prefect Triggers in the YAML:</p>
+                
+                <div class="grid grid-cols-2 gap-6 mt-6">
+                    <div class="bg-slate-800 p-5 rounded border border-cyan-500/30">
+                        <h4 class="text-cyan-400 font-bold mb-2">1. The Interval Trigger</h4>
+                        <code class="text-sm font-mono block bg-slate-900 p-2 rounded mb-1">interval: 1209600.0</code>
+                        <code class="text-sm font-mono block bg-slate-900 p-2 rounded mb-2 text-cyan-200">anchor_date: "2026-03-02T09:00:00Z"</code>
+                        <p class="text-lg">Runs exactly every 14 days down to the second, using the anchor date to lock the loop to a specific starting point.</p>
+                    </div>
+                    
+                    <div class="bg-slate-800 p-5 rounded border border-cyan-500/30">
+                        <h4 class="text-cyan-400 font-bold mb-2">2. The Business Day Hook</h4>
+                        <code class="text-sm font-mono block bg-slate-900 p-2 rounded mb-2">target_business_day: 5</code>
+                        <p class="text-lg">Pass this as a parameter, and the Master Pipeline blocks execution until the actual 5th Toronto work day.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    
+    <!-- Slide 11: Terminology Comparison -->
+    <div class="slide" id="slide-10">
+        <div class="glass-panel w-full max-w-6xl">
+            <h2 class="text-5xl font-bold mb-8 text-fuchsia-400 border-b border-slate-700 pb-4">Python Basics vs. Prefect Engine</h2>
+            <div class="grid grid-cols-3 gap-6">
+                
+                <!-- Standard Def -->
+                <div class="bg-slate-800/80 p-6 rounded-xl border border-slate-600">
+                    <h3 class="text-3xl font-bold text-white mb-4 bg-slate-700 p-2 rounded text-center font-mono">def function()</h3>
+                    <p class="text-xl text-slate-300 mb-4 h-24">Inside Prefect, standard Python perfectly executes! But it acts as a "black box". The UI won't track its logs, duration, or retries.</p>
+                    <div class="bg-slate-900 p-4 rounded text-slate-400 font-mono text-sm border border-slate-700">
+                        <span class="text-sky-400">def</span> <span class="text-emerald-300">do_work</span>():<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;print(<span class="text-amber-300">"Invisible to UI Dashboard"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;1 / 0 <span class="text-slate-500"># Crashes permanently</span><br>
+                    </div>
+                </div>
+
+                <!-- @task -->
+                <div class="bg-slate-800/80 p-6 rounded-xl border border-emerald-500/50 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-emerald-500"></div>
+                    <h3 class="text-3xl font-bold text-emerald-400 mb-4 bg-emerald-900/30 p-2 rounded text-center border border-emerald-500/30 font-mono">@task</h3>
+                    <p class="text-xl text-slate-300 mb-4 h-24">A monitored step. Prefect records how long it took and captures all print logs/errors into the UI database.</p>
+                    <div class="bg-slate-900 p-4 rounded text-slate-400 font-mono text-sm border border-slate-700">
+                        <span class="text-purple-400">@task</span>(retries=<span class="text-amber-300">2</span>)<br>
+                        <span class="text-sky-400">def</span> <span class="text-emerald-300">do_work</span>():<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;print(<span class="text-amber-300">"Saved to UI log!"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;1 / 0 <span class="text-slate-500"># Safely pauses, then retries</span><br>
+                    </div>
+                </div>
+
+                <!-- @flow -->
+                <div class="bg-slate-800/80 p-6 rounded-xl border border-purple-500/50 relative overflow-hidden shadow-[0_0_20px_rgba(168,85,247,0.15)]">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-purple-500"></div>
+                    <h3 class="text-3xl font-bold text-purple-400 mb-4 bg-purple-900/30 p-2 rounded text-center border border-purple-500/30 font-mono">@flow</h3>
+                    <p class="text-xl text-slate-300 mb-4 h-24">The Orchestrator root. <span class="font-bold text-white">Only a @flow can be scheduled in prefect.yaml.</span></p>
+                    <div class="bg-slate-900 p-4 rounded text-slate-400 font-mono text-sm border border-slate-700">
+                        <span class="text-purple-400">@flow</span>(name=<span class="text-amber-300">"Main"</span>)<br>
+                        <span class="text-sky-400">def</span> <span class="text-emerald-300">pipeline</span>():<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;do_work() <span class="text-slate-500"># Calls the @task</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;print(<span class="text-amber-300">"Flow finished!"</span>)<br>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Slide 12: How Triggers Work -->
+    <div class="slide" id="slide-11">
+        <div class="glass-panel w-full max-w-5xl">
+            <h2 class="text-5xl font-bold mb-8 text-orange-400 border-b border-slate-700 pb-4">The Triggering Mechanism</h2>
+            <div class="pl-4 space-y-8">
+                <div>
+                    <h3 class="text-3xl font-bold text-white mb-2">1. The Server & Worker</h3>
+                    <p class="text-xl text-slate-300"><code>start.bat</code> starts two background processes. The <span class="font-bold text-sky-400">Server</span> holds the schedules. The <span class="font-bold text-emerald-400">Worker</span> constantly polls the Server asking, "Is it time yet?"</p>
+                </div>
+                <div>
+                    <h3 class="text-3xl font-bold text-white mb-2">2. The YAML Schedule</h3>
+                    <p class="text-xl text-slate-300">When you edit <code>prefect.yaml</code>, you are simply declaring a schedule. But Prefect doesn't know about it yet.</p>
+                </div>
+                <div class="bg-slate-800/80 p-6 rounded-xl border border-orange-500/30">
+                    <h3 class="text-3xl font-bold text-orange-400 mb-2">3. The Deployment Trigger</h3>
+                    <p class="text-xl text-slate-300">When you double click <code>deployment.bat</code>, it runs: <br><code class="bg-black px-2 py-1 rounded text-orange-300 inline-block mt-2">prefect deploy --all</code></p>
+                    <p class="text-xl text-slate-300 mt-2">This securely transmits the YAML schedule to the live Server. The Server then tells the Worker exactly when to trigger the Master Pipeline.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Slide 13: The Manager's Guide -->
+    <div class="slide" id="slide-12">
+        <div class="glass-panel w-full max-w-5xl">
+            <h2 class="text-5xl font-bold mb-8 text-amber-400 border-b border-slate-700 pb-4">Adding Jobs (Manager's Guide)</h2>
+            <p class="text-2xl text-slate-300 mb-6">Zero Prefect code knowledge is required to add or modify a pipeline.</p>
+            <ol class="list-decimal list-inside space-y-4 text-2xl text-slate-300 bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                <li>Write standard Python code (e.g., <code>c:\temp\script.py</code>).</li>
+                <li>Open <code>c:\prefect\prefect.yaml</code>.</li>
+                <li>Add the script's path to the <code>scripts_to_run</code> list.</li>
+                <li>Set the desired <code>cron</code> or <code>target_business_day</code> variable.</li>
+                <li class="font-bold text-amber-400">Double-click <code>deployment.bat</code> to push live!</li>
+            </ol>
+        </div>
+    </div>
+
+
+
+
+    <!-- Slide 14: Sequential Workflows -->
+    <div class="slide" id="slide-13">
+        <div class="glass-panel w-full max-w-5xl">
+            <h2 class="text-5xl font-bold mb-8 text-indigo-400 border-b border-slate-700 pb-4">User Guide: Sequential Workflows</h2>
+            <div class="space-y-6 text-2xl text-slate-300">
+                <p>Do you have a pipeline where Script B absolutely must wait for Script A to finish? Prefect handles this natively.</p>
+                <p>Simply list them in order. The Master Pipeline will run them sequentially and protect the downstream jobs if an upstream job fails.</p>
+                
+                <div class="bg-slate-900 rounded-lg p-5 font-mono text-lg border border-slate-700 text-slate-300 relative group">
+                    <span class="text-purple-400">parameters:</span><br>
+                    &nbsp;&nbsp;<span class="text-purple-400">scripts_to_run:</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">- 'c:\temp\A_Extract.py'</span> <span class="text-slate-500"># Runs First</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">- 'c:\temp\B_Transform.py'</span> <span class="text-slate-500"># Runs Second</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">- 'c:\temp\C_Load.py'</span> <span class="text-slate-500"># Runs Third</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Slide 15: Security & Data Privacy -->
+    <div class="slide" id="slide-14">
+        <div class="glass-panel w-full max-w-5xl">
+            <h2 class="text-5xl font-bold mb-8 text-emerald-400 border-b border-slate-700 pb-4">Security & Data Privacy</h2>
+            <div class="space-y-6 text-2xl text-slate-300">
+                <p>This entire architecture is built as an <span class="font-bold text-white">Air-Gapped Local Implementation</span>.</p>
+                
+                <ul class="list-disc list-inside space-y-4 ml-4 mt-6">
+                    <li><span class="text-emerald-400 font-bold border-b border-emerald-400/30">Zero Cloud Dependency:</span> We do not use Prefect Cloud. We run the open-source Prefect Server natively right on our own Windows machine.</li>
+                    <li><span class="text-emerald-400 font-bold border-b border-emerald-400/30">Total Data Sovereignty:</span> Your company's sensitive data, API keys, and pipeline logic <span class="text-rose-400 font-bold">never</span> leave the internal network.</li>
+                    <li><span class="text-emerald-400 font-bold border-b border-emerald-400/30">Self-Healing Constraints:</span> The virtual environment ensures that even if a chaotic script is deployed, it cannot permanently break the host machine's global registry or core Python installation.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    
+
+    <!-- Slide 16: The Master Pipeline Code -->
+    <div class="slide" id="slide-15">
+        <div class="glass-panel w-full max-w-6xl">
+            <h2 class="text-5xl font-bold mb-8 text-purple-400 border-b border-slate-700 pb-4">Under the Hood: @task & @flow</h2>
+            <div class="flex gap-8">
+                <div class="flex-1 space-y-4 text-xl text-slate-300">
+                    <p>The core engine is <code>master_pipeline.py</code>.</p>
+                    <p>In Prefect, a <span class="text-purple-400 font-bold">@flow</span> is the main orchestrator (the container). A <span class="text-emerald-400 font-bold">@task</span> is an individual, trackable step within that container.</p>
+                    <ul class="list-disc list-inside space-y-2 ml-4">
+                        <li><code>@task: run_task()</code> encapsulates each of your raw <code>.py</code> scripts so Prefect can monitor them.</li>
+                        <li><code>@task: check_toronto_business_day()</code> runs the mathematical holiday checks.</li>
+                        <li><code>@flow: run_script_list()</code> strings them all together sequentially.</li>
+                    </ul>
+                </div>
+                <div class="flex-1 bg-slate-900 rounded-lg p-5 font-mono text-sm border border-slate-700 text-slate-300 shadow-xl overflow-hidden relative">
+                    <div class="absolute right-2 top-2 text-xs text-slate-500 bg-slate-800 px-2 rounded">master_pipeline.py</div>
+                    <span class="text-purple-400">@task</span><br>
+                    <span class="text-sky-400">def</span> <span class="text-emerald-300">run_task</span>(script_path):<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;result = subprocess.run([<span class="text-amber-300">"python"</span>, script_path])<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-slate-500"># Inherits pure python exit statuses</span><br>
+                    <br>
+                    <span class="text-purple-400">@flow</span>(name=<span class="text-amber-300">"Master-Pipeline-Runner"</span>)<br>
+                    <span class="text-sky-400">def</span> <span class="text-emerald-300">run_script_list</span>(scripts_to_run: list[str]):<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-sky-400">for</span> script <span class="text-sky-400">in</span> scripts_to_run:<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;run_task(script)<br>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Slide 17: The Dashboard Tour -->
+    <div class="slide" id="slide-16">
+        <div class="glass-panel w-full max-w-6xl">
+            <h2 class="text-5xl font-bold mb-8 text-fuchsia-400 border-b border-slate-700 pb-4">The Command Center UI</h2>
+            <div class="flex gap-8 items-center">
+                <div class="flex-1 space-y-6 text-2xl text-slate-300">
+                    <p>Instead of digging through cryptic Windows Event logs to see if a pipeline ran, you get a beautiful, interactive web dashboard.</p>
+                    <p>Just open <code class="bg-slate-800 text-fuchsia-300 px-2 py-1 rounded">http://127.0.0.1:4200</code> on the host machine.</p>
+                    <ul class="list-disc list-inside space-y-2 ml-4">
+                        <li><span class="text-emerald-400 font-bold">Green Blocks:</span> Successful runs</li>
+                        <li><span class="text-rose-400 font-bold">Red Blocks:</span> Failed runs (Click to see exactly which Python line broke)</li>
+                        <li><span class="text-sky-400 font-bold">Blue Blocks:</span> Currently executing</li>
+                    </ul>
+                </div>
+                <div class="w-1/2 bg-slate-900 rounded-xl p-4 border border-slate-700 shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-8 bg-slate-800 flex items-center px-4 border-b border-slate-700">
+                        <div class="flex gap-2">
+                            <div class="w-3 h-3 rounded-full bg-rose-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                        </div>
+                    </div>
+                    <div class="mt-8 grid grid-cols-7 gap-1">
+                        <!-- Mock scatterplot UI -->
+                        <!-- Row 1 -->
+                        <div class="h-8 bg-emerald-500/80 rounded border border-emerald-400/50"></div>
+                        <div class="h-8 bg-slate-800 rounded"></div>
+                        <div class="h-8 bg-emerald-500/80 rounded border border-emerald-400/50"></div>
+                        <div class="h-8 bg-emerald-500/80 rounded border border-emerald-400/50"></div>
+                        <div class="h-8 bg-slate-800 rounded"></div>
+                        <div class="h-8 bg-emerald-500/80 rounded border border-emerald-400/50"></div>
+                        <div class="h-8 bg-rose-500/80 rounded border border-rose-400/50 animate-pulse"></div>
+                        <!-- Row 2 -->
+                        <div class="h-8 bg-slate-800 rounded"></div>
+                        <div class="h-8 bg-emerald-500/80 rounded border border-emerald-400/50"></div>
+                        <div class="h-8 bg-slate-800 rounded"></div>
+                        <div class="h-8 bg-emerald-500/80 rounded border border-emerald-400/50"></div>
+                        <div class="h-8 bg-emerald-500/80 rounded border border-emerald-400/50"></div>
+                        <div class="h-8 bg-slate-800 rounded"></div>
+                        <div class="h-8 bg-sky-500/80 rounded border border-sky-400/50"></div>
+                    </div>
+                    <div class="mt-4 text-center text-sm text-slate-500 font-mono">Simulated Run History</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Slide 18: Creating a New Workflow -->
+    <div class="slide" id="slide-17">
+        <div class="glass-panel w-full max-w-5xl">
+            <h2 class="text-5xl font-bold mb-8 text-pink-400 border-b border-slate-700 pb-4">User Guide: New Workflows</h2>
+            <div class="space-y-6 text-2xl text-slate-300">
+                <p>Need a weekend script that runs on a totally different schedule? Add a completely new deployment block to the bottom of <code>prefect.yaml</code>.</p>
+                
+                <div class="bg-slate-900 rounded-lg p-5 font-mono text-sm border border-slate-700 text-slate-300">
+                    <span class="text-slate-500"># Just copy and paste the block below the others!</span><br>
+                    <span class="text-purple-400">- name:</span> <span class="text-green-300">"weekend-report-deployment"</span><br>
+                    &nbsp;&nbsp;<span class="text-purple-400">entrypoint:</span> <span class="text-green-300">"master_pipeline.py:run_script_list"</span><br>
+                    &nbsp;&nbsp;<span class="text-purple-400">parameters:</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">scripts_to_run:</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">- 'c:\temp\weekend_script.py'</span><br>
+                    &nbsp;&nbsp;<span class="text-purple-400">schedules:</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-green-300">- cron: "0 12 * * 6,0"</span> <span class="text-slate-500"># Sat/Sun at Noon</span>
+                </div>
+                <p class="text-xl mt-4">Double-click <code class="text-amber-400 bg-slate-800 px-2 rounded">deployment.bat</code> and your new Weekend Flow will appear in the UI.</p>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Slide 19: Q&A -->
+    <div class="slide" id="slide-18">
+        <div class="text-center w-full max-w-4xl mx-auto">
+            <h2 class="text-7xl font-bold mb-8 text-sky-400">Thank You</h2>
+            <p class="text-3xl text-slate-300 mb-12">The Data Engineering Architecture is now live and running beautifully.</p>
+            
+            <div class="flex justify-center gap-6">
+                <div class="bg-slate-800/80 px-8 py-6 rounded-2xl border border-emerald-500/30 text-emerald-400 font-bold text-2xl shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+                    Local. Secure. Silent.
+                </div>
+            </div>
+            <p class="mt-16 text-xl text-slate-500 italic">Questions?</p>
+        </div>
+    </div>
+
+
+    <!-- Slide 19: Q&A -->
+    <div class="slide" id="slide-18">
+        <div class="text-center w-full max-w-4xl mx-auto">
+            <h2 class="text-7xl font-bold mb-8 text-sky-400">Thank You</h2>
+            <p class="text-3xl text-slate-300 mb-12">The Data Engineering Architecture is now live and running beautifully.</p>
+            
+            <div class="flex justify-center gap-6">
+                <div class="bg-slate-800/80 px-8 py-6 rounded-2xl border border-emerald-500/30 text-emerald-400 font-bold text-2xl shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+                    Local. Secure. Silent.
+                </div>
+            </div>
+            <p class="mt-16 text-xl text-slate-500 italic">Questions?</p>
+        </div>
+    </div>
+
+    <!-- UI Elements -->
+    <div id="slide-counter">1 / 19</div>
+    <div id="controls">
+        <button class="control-btn" id="prev-btn">← Previous</button>
+        <button class="control-btn" id="next-btn">Next →</button>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('slide-counter');
+        let currentSlide = 0;
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                if (index === currentSlide) {
+                    slide.className = 'slide active';
+                } else if (index < currentSlide) {
+                    slide.className = 'slide previous';
+                } else {
+                    slide.className = 'slide';
+                }
+            });
+            counter.innerText = `${currentSlide + 1} / ${slides.length}`;
+            prevBtn.style.opacity = currentSlide === 0 ? '0.5' : '1';
+            nextBtn.style.opacity = currentSlide === slides.length - 1 ? '0.5' : '1';
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateSlides();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlides();
+            }
+        }
+
+        nextBtn.addEventListener('click', nextSlide);
+        prevBtn.addEventListener('click', prevSlide);
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'Space') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Initialize
+        updateSlides();
+    </script>
+</body>
+</html>
