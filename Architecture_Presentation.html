@@ -361,7 +361,7 @@
                 <!-- Standard Def -->
                 <div class="bg-slate-800/80 p-6 rounded-xl border border-slate-600">
                     <h3 class="text-3xl font-bold text-white mb-4 bg-slate-700 p-2 rounded text-center font-mono">def function()</h3>
-                    <p class="text-xl text-slate-300 mb-4 h-24">Inside Prefect, standard Python perfectly executes! But it acts as a "black box". The UI won't track its logs, duration, or retries.</p>
+                    <p class="text-lg text-slate-300 mb-4 h-28">Inside Prefect, standard Python perfectly executes! But it acts as a "black box". The UI won't track its logs, duration, or retries.</p>
                     <div class="bg-slate-900 p-4 rounded text-slate-400 font-mono text-sm border border-slate-700">
                         <span class="text-sky-400">def</span> <span class="text-emerald-300">do_work</span>():<br>
                         &nbsp;&nbsp;&nbsp;&nbsp;print(<span class="text-amber-300">"Invisible to UI Dashboard"</span>)<br>
@@ -373,7 +373,7 @@
                 <div class="bg-slate-800/80 p-6 rounded-xl border border-emerald-500/50 relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-full h-1 bg-emerald-500"></div>
                     <h3 class="text-3xl font-bold text-emerald-400 mb-4 bg-emerald-900/30 p-2 rounded text-center border border-emerald-500/30 font-mono">@task</h3>
-                    <p class="text-xl text-slate-300 mb-4 h-24">A monitored step. Prefect records how long it took and captures all print logs/errors into the UI database.</p>
+                    <p class="text-lg text-slate-300 mb-4 h-28">A monitored step. Prefect records exactly how long it took and captures all print logs/errors directly into the UI database.</p>
                     <div class="bg-slate-900 p-4 rounded text-slate-400 font-mono text-sm border border-slate-700">
                         <span class="text-purple-400">@task</span>(retries=<span class="text-amber-300">2</span>)<br>
                         <span class="text-sky-400">def</span> <span class="text-emerald-300">do_work</span>():<br>
@@ -386,7 +386,7 @@
                 <div class="bg-slate-800/80 p-6 rounded-xl border border-purple-500/50 relative overflow-hidden shadow-[0_0_20px_rgba(168,85,247,0.15)]">
                     <div class="absolute top-0 left-0 w-full h-1 bg-purple-500"></div>
                     <h3 class="text-3xl font-bold text-purple-400 mb-4 bg-purple-900/30 p-2 rounded text-center border border-purple-500/30 font-mono">@flow</h3>
-                    <p class="text-xl text-slate-300 mb-4 h-24">The Orchestrator root. <span class="font-bold text-white">Only a @flow can be scheduled in prefect.yaml.</span></p>
+                    <p class="text-lg text-slate-300 mb-4 h-28">The Orchestrator root. <span class="font-bold text-white">Only a @flow can be scheduled in prefect.yaml.</span></p>
                     <div class="bg-slate-900 p-4 rounded text-slate-400 font-mono text-sm border border-slate-700">
                         <span class="text-purple-400">@flow</span>(name=<span class="text-amber-300">"Main"</span>)<br>
                         <span class="text-sky-400">def</span> <span class="text-emerald-300">pipeline</span>():<br>
