@@ -84,7 +84,7 @@ Once you have run `start.bat`, the system is fully active in the background.
    ```yaml
    parameters:
      scripts_to_run:
-       - 'c:\temp\temp1.py'
+       - 'c:\scripts\script1.py'
        - 'c:\path\to\your\new_script.py'
    ```
 4. **Deploy the Change:** Double-click **`deployment.bat`** so the server registers the completely new job list!
@@ -116,8 +116,12 @@ If you want to create a brand new pipeline that runs on a completely different s
 1. Open `C:\prefect\prefect.yaml`.
 2. Locate the `deployments` section at the bottom.
 3. You can change the `name` of the deployment here.
-4. To change when the pipeline runs, modify the `cron` string under `schedules` (e.g., `"0 12 * * *"` runs it at noon).
-5. **CRUCIAL:** After making any changes to `prefect.yaml` or `master_pipeline.py`, you **MUST double-click `deployment.bat`** to push the changes live to the server!
+4. To change when the pipeline runs, modify the schedule blocks:
+   - **For Daily times:** Use `cron: "0 12 * * *"`
+   - **For Every X Days:** Use `interval: 1209600.0` (This is 14 days in seconds, requires an `anchor_date`)
+   - **For Specific Random Dates:** Use `rrule: "DTSTART:20260101T090000Z\nRRULE:FREQ=DAILY;COUNT=4\nRDATE:20260101T090000Z,20260203T090000Z"`
+5. **For Business Days:** Add `target_business_day: 5` under `parameters` and use a daily `cron` schedule. The script will automatically skip weekends and Toronto holidays until the 5th true business day is reached.
+6. **CRUCIAL:** After making any changes to `prefect.yaml` or `master_pipeline.py`, you **MUST double-click `deployment.bat`** to push the changes live to the server!
 
 **Checking Logs:**
 

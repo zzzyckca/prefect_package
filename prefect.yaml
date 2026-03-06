@@ -1,4 +1,4 @@
-name: "Daily-Temp-Pipeline-Deployment"
+name: "Daily-Pipeline-Deployment"
 prefect-version: 3.6.19
 
 build: null
@@ -11,7 +11,7 @@ pull:
       directory: C:\prefect
 
 deployments:
-  - name: "daily-temp-deployment"
+  - name: "daily-deployment"
     version: null
     tags: []
     description: null
@@ -22,6 +22,56 @@ deployments:
         - 'c:\temp\temp2.py'
         - 'c:\temp\temp3.py'
         - 'c:\temp\temp4.py'
+    work_pool:
+      name: "local-windows-pool"
+      work_queue_name: null
+      job_variables: {}
+    schedules:
+      - cron: "0 9 * * *"
+        timezone: "America/Toronto"
+
+  - name: "bi-weekly-monday-deployment"
+    version: null
+    tags: []
+    description: null
+    entrypoint: "master_pipeline.py:run_script_list"
+    parameters:
+      scripts_to_run:
+        - 'c:\temp\bi_weekly_script.py'
+    work_pool:
+      name: "local-windows-pool"
+      work_queue_name: null
+      job_variables: {}
+    schedules:
+      - interval: 1209600.0
+        anchor_date: "2026-03-09T09:00:00-04:00"
+        timezone: "America/Toronto"
+
+  - name: "custom-dates-deployment"
+    version: null
+    tags: []
+    description: null
+    entrypoint: "master_pipeline.py:run_script_list"
+    parameters:
+      scripts_to_run:
+        - 'c:\temp\custom_date_script.py'
+    work_pool:
+      name: "local-windows-pool"
+      work_queue_name: null
+      job_variables: {}
+    schedules:
+      - rrule: "DTSTART:20260101T090000Z\nRRULE:FREQ=DAILY;COUNT=4\nRDATE:20260101T090000Z,20260203T090000Z,20260304T090000Z,20260321T090000Z"
+        timezone: "America/Toronto"
+
+  - name: "5th-business-day-deployment"
+    version: null
+    tags: []
+    description: null
+    entrypoint: "master_pipeline.py:run_script_list"
+    parameters:
+      target_business_day: 5
+      scripts_to_run:
+        - 'c:\temp\business_day_script.py'
     work_pool:
       name: "local-windows-pool"
       work_queue_name: null
